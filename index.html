@@ -167,19 +167,36 @@
     .ci360-banner-zone {
       max-width: 1280px; margin: 40px auto 0; padding: 0 32px;
     }
+    
     .ci360-banner-spot {
       border: none;
       border-radius: var(--radius);
-      padding: 0;
+      padding: 0 32px; /* Buffer strictly on left and right */
       background: linear-gradient(135deg, #F0E8FF 0%, #E8F5FF 100%);
-      position: relative; overflow: hidden;
+      position: relative; 
+      overflow: hidden;
       min-height: 120px;
-      display: flex; align-items: stretch;
+      display: flex; 
+      align-items: center; /* Center to prevent stretching weird heights */
+      box-sizing: border-box;
     }
+
+    #ci360-hero-spot {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Force injected images/iframes to respect bounds */
+    #ci360-hero-spot img, 
+    #ci360-hero-spot iframe {
+      max-width: 100%;
+      height: auto;
+    }
+
     /* This placeholder is shown when no CI 360 creative is loaded */
     .ci360-placeholder {
       width: 100%; display: flex; align-items: center; justify-content: center;
-      gap: 16px; padding: 24px 32px;
+      gap: 16px; padding: 24px 0; /* Vertical padding moved here so it only applies when empty */
       color: var(--stc-purple); font-size: 14px; font-weight: 500;
     }
     .ci360-placeholder .ci-icon {
@@ -189,8 +206,6 @@
       font-size: 20px; flex-shrink: 0;
     }
     .ci360-placeholder p { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
-    /* The actual creative will be injected by CI 360 into #ci360-hero-spot */
-    #ci360-hero-spot { width: 100%; padding: 0 24px; }
 
     /* ── PLANS SECTION ── */
     .plans-section {
@@ -439,7 +454,7 @@
 
   <div class="ci360-banner-zone">
     <div class="ci360-banner-spot">
-      <div id="ci360-hero-spot" style="width:100%">
+      <div id="ci360-hero-spot">
         <div class="ci360-placeholder">
           <div class="ci-icon">⚡</div>
           <div>
@@ -609,3 +624,99 @@
        Powered by <a href="#">SAS CI 360</a> Personalization
     </p>
   </footer>
+
+  <div class="toast" id="toast">
+    <span class="toast-icon">🛒</span>
+    <span id="toast-msg">Plan added to cart!</span>
+  </div>
+
+  <script>
+    // ── 1. Page view event → CI 360 ──
+    window.addEventListener('load', function () {
+      if (typeof ci360 === 'function') {
+        ci360('send', 'page', {
+          pageType: 'postpaid_plans',
+          pageName: 'Postpaid Plans 2026',
+          pageCategory: 'consumer',
+          pageLanguage: 'en'
+        });
+        console.log('[CI360] Page event sent: postpaid_plans');
+      }
+    });
+
+    // ── 2. Cart state ──
+    let cart = JSON.parse(sessionStorage.getItem('stc_cart') || '[]');
+    updateCartBadge();
+
+    function updateCartBadge() {
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    // ── 3. Add to Cart — sends CI 360 event ──
+    function addToCart(btn, planName, price, tier) {
+      // Prevent duplicate
+      if (cart.find(p => p.name === planName)) {
+        showToast('✅ ' + planName + ' is already in your cart!');
+        return;
+      }
+
+      const item = { name: planName, price: price, tier: tier };
+      cart.push(item);
+      sessionStorage.setItem('stc_cart', JSON.stringify(cart));
+      updateCartBadge();
+
+      // Update button state
+      btn.textContent = '✓ Added';
+      btn.classList.add('added');
+
+      // ── CI 360: addToCart event ──
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', {
+          eventType: 'addToCart',
+          planName: planName,
+          planTier: tier,
+          planPrice: price,
+          currency: 'SAR',
+          pageType: 'postpaid_plans'
+        });
+        console.log('[CI360] addToCart event sent:', planName, price);
+      }
+
+      showToast('🛒 ' + planName + ' added! View cart to check out.');
+    }
+
+    // ── 4. Billing toggle ──
+    let isAnnual = false;
+    function toggleBilling(el) {
+      isAnnual = !isAnnual;
+      el.classList.toggle('annual', isAnnual);
+
+      document.querySelectorAll('.plan-card').forEach(card => {
+        const monthly = card.dataset.price;
+        const annual  = card.dataset.annualPrice;
+        const amountEl = card.querySelector('.price-amount');
+        if (amountEl) amountEl.textContent = isAnnual ? annual : monthly;
+      });
+
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', { eventType: 'billingToggle', mode: isAnnual ? 'annual' : 'monthly' });
+      }
+    }
+
+    // ── 5. Navigate to checkout ──
+    function goToCheckout() {
+      if (cart.length === 0) { showToast('⚠️ Add a plan to your cart first.'); return; }
+      window.location.href = 'checkout.html';
+    }
+
+    // ── 6. Toast utility ──
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+  </script>
+
+</body>
+</html>
