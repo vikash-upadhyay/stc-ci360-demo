@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STC | Checkout</title>
+
+  <!-- ═══════════════════════════════════════════════
+       SAS CI 360 TAG — STC Demo Tenant
+  ═══════════════════════════════════════════════ -->
+  <link rel='preload' href='https://ingest-training.ci360.sas.com/js/ot2.min.js' as='script' />
+  <script>
+    (function(ci, a) {
+      window[ci] || function() {
+        var ef = window[ci] = function() { return ef.q.push(arguments); };
+        ef.q = []; ef.a = a || {};
+      }();
+    })('ci360', { tenantId: '2a7ea85c0b000164f7542674' });
+  </script>
+  <script async data-efname='ci360'
+    src='https://ingest-training.ci360.sas.com/js/ot2.min.js'
+    id='ob-script-async'>
+  </script>
+  <!-- ═══════════════════════════════════════════ -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --stc-purple: #491C76;
+      --stc-purple-dark: #2E1050;
+      --stc-purple-light: #6B2FA0;
+      --stc-green: #00B14F;
+      --stc-green-light: #00D461;
+      --stc-amber: #F59E0B;
+      --stc-red: #EF4444;
+      --bg: #F7F5FF;
+      --bg-card: #FFFFFF;
+      --text-primary: #1A0A2E;
+      --text-secondary: #6B5F80;
+      --text-muted: #9E93B0;
+      --border: #E8E2F5;
+      --shadow-sm: 0 2px 8px rgba(73,28,118,0.08);
+      --shadow-md: 0 8px 32px rgba(73,28,118,0.12);
+      --shadow-lg: 0 20px 60px rgba(73,28,118,0.18);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--stc-purple), var(--stc-purple-light));
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 16px; letter-spacing: -1px;
+    }
+    .logo-text { color: var(--stc-purple); font-weight: 700; font-size: 22px; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .breadcrumb a { color: var(--stc-purple); text-decoration: none; font-weight: 500; }
+    .breadcrumb .sep { color: var(--border); }
+
+    /* Progress Steps */
+    .checkout-progress {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+    }
+    .progress-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; gap: 0;
+    }
+    .step {
+      display: flex; align-items: center; gap: 10px;
+      flex: 1;
+    }
+    .step-bubble {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .step.done .step-bubble { background: var(--stc-green); color: white; }
+    .step.active .step-bubble { background: var(--stc-purple); color: white; }
+    .step.upcoming .step-bubble { background: var(--border); color: var(--text-muted); }
+    .step-label { font-size: 13px; font-weight: 500; }
+    .step.active .step-label { color: var(--stc-purple); font-weight: 600; }
+    .step.upcoming .step-label { color: var(--text-muted); }
+    .step-connector { flex: 1; height: 2px; background: var(--border); margin: 0 8px; }
+    .step-connector.done { background: var(--stc-green); }
+
+    /* ── MAIN LAYOUT ── */
+    .checkout-wrapper {
+      max-width: 1280px; margin: 0 auto;
+      padding: 40px 32px 80px;
+      display: grid; grid-template-columns: 1fr 400px;
+      gap: 32px; align-items: start;
+    }
+
+    /* ── LEFT COLUMN ── */
+    .checkout-left { display: flex; flex-direction: column; gap: 24px; }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .card-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .card-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--stc-purple), var(--stc-purple-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .card-header h3 { font-size: 18px; font-weight: 700; }
+
+    /* Cart items */
+    .cart-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 12px;
+      background: var(--bg);
+    }
+    .cart-item-left { display: flex; align-items: center; gap: 16px; }
+    .cart-item-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--stc-purple), var(--stc-purple-light));
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 20px;
+    }
+    .cart-item-name { font-weight: 600; font-size: 15px; }
+    .cart-item-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .cart-item-price { font-size: 18px; font-weight: 800; color: var(--stc-purple); }
+    .cart-item-price span { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+    .remove-btn {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 18px; padding: 4px; transition: color .2s;
+    }
+    .remove-btn:hover { color: var(--stc-red); }
+
+    .empty-cart {
+      text-align: center; padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .empty-cart .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-cart p { margin-bottom: 20px; font-size: 15px; }
+    .back-btn {
+      background: var(--stc-purple); color: white;
+      border: none; border-radius: var(--radius-sm);
+      padding: 12px 24px; font-family: 'Sora', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-block;
+    }
+
+    /* Contact form */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase; }
+    .form-group input, .form-group select {
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 12px 16px; font-family: 'Sora', sans-serif;
+      font-size: 14px; color: var(--text-primary);
+      transition: border-color .2s;
+      background: white;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none; border-color: var(--stc-purple);
+    }
+
+    /* Payment */
+    .payment-methods {
+      display: flex; gap: 12px; margin-bottom: 24px;
+    }
+    .pay-method {
+      flex: 1; padding: 14px; border: 2px solid var(--border);
+      border-radius: var(--radius-sm); text-align: center;
+      cursor: pointer; transition: all .2s;
+    }
+    .pay-method.active { border-color: var(--stc-purple); background: #F5F0FF; }
+    .pay-method .icon { font-size: 22px; margin-bottom: 4px; }
+    .pay-method .label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CI 360 UPSELL SPOT — Checkout Personalization Zone
+       Zone ID: "checkout_upsell" configured in CI 360
+       CI 360 fires the "checkoutReached" event and serves the upsell
+    ═══════════════════════════════════════════════════════════════ */
+    .ci360-upsell-wrapper {
+      margin-top: 4px;
+    }
+    .ci360-upsell-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--stc-purple);
+      display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+    }
+    .ci360-upsell-label::before {
+      content: ''; width: 20px; height: 2px; background: var(--stc-purple);
+    }
+    .ci360-upsell-label::after {
+      content: ''; flex: 1; height: 2px; background: var(--border);
+    }
+    #ci360-upsell-spot {
+      border: 2px dashed var(--stc-purple-light);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #F5F0FF, #FFF0F8);
+      min-height: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ci360-upsell-placeholder {
+      padding: 24px; display: flex; align-items: center; gap: 16px;
+    }
+    .ci360-upsell-placeholder .ci-badge {
+      background: var(--stc-purple); color: white;
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0;
+    }
+    .ci360-upsell-placeholder p {
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+    }
+    .ci360-upsell-placeholder strong { color: var(--stc-purple); }
+
+    /* Upsell card — rendered by creative.html content injected here */
+    .upsell-card {
+      background: linear-gradient(135deg, var(--stc-purple-dark), var(--stc-purple));
+      padding: 24px; color: white; border-radius: calc(var(--radius) - 2px);
+      display: none; /* shown when CI360 triggers it */
+      align-items: flex-start; gap: 16px;
+    }
+    .upsell-card.visible { display: flex; }
+    .upsell-icon { font-size: 36px; flex-shrink: 0; }
+    .upsell-body { flex: 1; }
+    .upsell-tag {
+      background: var(--stc-amber); color: var(--text-primary);
+      font-size: 10px; font-weight: 800; padding: 3px 10px;
+      border-radius: 20px; display: inline-block; margin-bottom: 8px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .upsell-body h4 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .upsell-body p { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
+    .upsell-cta {
+      background: var(--stc-green); border: none; color: white;
+      padding: 10px 20px; border-radius: var(--radius-sm);
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s; margin-right: 8px;
+    }
+    .upsell-cta:hover { background: var(--stc-green-light); transform: translateY(-1px); }
+    .upsell-dismiss {
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7); padding: 10px 16px;
+      border-radius: var(--radius-sm); font-family: 'Sora', sans-serif;
+      font-size: 13px; cursor: pointer; transition: all .2s;
+    }
+    .upsell-dismiss:hover { border-color: white; color: white; }
+
+    /* ── RIGHT COLUMN — ORDER SUMMARY ── */
+    .order-summary {
+      position: sticky; top: 100px;
+    }
+    .summary-title {
+      font-size: 16px; font-weight: 700; margin-bottom: 20px;
+      padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    }
+    .summary-line {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; color: var(--text-secondary); padding: 8px 0;
+    }
+    .summary-line.total {
+      font-size: 18px; font-weight: 800; color: var(--text-primary);
+      border-top: 2px solid var(--border); margin-top: 8px; padding-top: 16px;
+    }
+    .summary-line.discount { color: var(--stc-green); }
+    .discount-badge {
+      background: #ECFDF5; color: var(--stc-green);
+      font-size: 11px; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .checkout-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--stc-green), #009940);
+      color: white; border: none; border-radius: var(--radius-sm);
+      font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; margin-top: 20px;
+      transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,177,79,0.4); }
+    .security-note {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; font-size: 12px; color: var(--text-muted);
+      margin-top: 12px;
+    }
+    .promos { margin-top: 16px; }
+    .promo-input {
+      display: flex; gap: 8px;
+    }
+    .promo-input input {
+      flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 13px;
+    }
+    .promo-input input:focus { outline: none; border-color: var(--stc-purple); }
+    .apply-btn {
+      background: var(--stc-purple); color: white; border: none;
+      border-radius: var(--radius-sm); padding: 10px 16px;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer;
+    }
+    .plan-highlights {
+      margin-top: 20px; padding: 16px;
+      background: var(--bg); border-radius: var(--radius-sm);
+    }
+    .highlight { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); padding: 4px 0; }
+    .highlight .dot { color: var(--stc-green); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal {
+      background: white; border-radius: var(--radius);
+      padding: 48px 40px; text-align: center; max-width: 420px;
+      transform: scale(0.9); transition: transform .3s;
+    }
+    .modal-overlay.show .modal { transform: scale(1); }
+    .modal-icon { font-size: 64px; margin-bottom: 16px; }
+    .modal h3 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .modal p { color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; }
+    .modal-close {
+      background: var(--stc-purple); color: white; border: none;
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+      cursor: pointer; width: 100%;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-wrapper { grid-template-columns: 1fr; }
+      .order-summary { position: static; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="index.html">
+        <div class="logo-mark">stc</div>
+        <span class="logo-text">stc</span>
+      </a>
+      <div class="breadcrumb">
+        <a href="index.html">Plans</a>
+        <span class="sep">›</span>
+        <span>Checkout</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress -->
+  <div class="checkout-progress">
+    <div class="progress-inner">
+      <div class="step done">
+        <div class="step-bubble">✓</div>
+        <span class="step-label">Select Plan</span>
+      </div>
+      <div class="step-connector done"></div>
+      <div class="step active">
+        <div class="step-bubble">2</div>
+        <span class="step-label">Review & Pay</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step upcoming">
+        <div class="step-bubble">3</div>
+        <span class="step-label">Confirmation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHECKOUT LAYOUT ── -->
+  <div class="checkout-wrapper">
+
+    <!-- LEFT: Form + Cart + CI360 Upsell -->
+    <div class="checkout-left">
+
+      <!-- Cart items -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📦</div>
+          <h3>Your Selected Plan</h3>
+        </div>
+        <div id="cart-display">
+          <div class="empty-cart">
+            <div class="icon">🛒</div>
+            <p>Your cart is empty. Choose a plan to get started.</p>
+            <a class="back-btn" href="index.html">Browse Plans</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           CI 360 UPSELL SPOT — Triggered by checkout visit + plan in cart
+           Zone: "checkout_upsell" | Offer type: device_bundle / add-on
+           CI 360 uses the cart data to determine the best upsell offer.
+      ═══════════════════════════════════════════════════════════════ -->
+      <div class="ci360-upsell-wrapper">
+        <div class="ci360-upsell-label">Personalized Offer</div>
+        <div id="ci360-upsell-spot">
+          <!-- Upsell creative injected by CI 360 at runtime -->
+          <div class="ci360-upsell-placeholder" id="upsell-placeholder">
+            <div class="ci-badge">CI 360</div>
+            <p><strong>Upsell Zone — Zone ID: checkout_upsell</strong><br>
+              SAS CI 360 evaluates the visitor's cart, profile, and real-time behaviour to serve the most relevant upsell offer here (device bundle, roaming add-on, entertainment upgrade, or loyalty reward).</p>
+          </div>
+          <!-- Demo upsell card — in production CI 360 injects this -->
+          <div class="upsell-card" id="demo-upsell-card">
+            <div class="upsell-icon">📱</div>
+            <div class="upsell-body">
+              <div class="upsell-tag">⚡ Limited Offer</div>
+              <h4>Upgrade to a New Device</h4>
+              <p>Add a Samsung Galaxy S25 for only <strong>SAR 149/mo</strong> — perfectly paired with your selected plan. Free delivery included.</p>
+              <button class="upsell-cta" onclick="acceptUpsell()">Add Device — SAR 149/mo</button>
+              <button class="upsell-dismiss" onclick="dismissUpsell()">No thanks</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Details -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">👤</div>
+          <h3>Account Details</h3>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="Ahmad" />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Al-Rashidi" />
+          </div>
+          <div class="form-group">
+            <label>National ID / Iqama</label>
+            <input type="text" placeholder="1XXXXXXXXX" />
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" placeholder="+966 5X XXX XXXX" />
+          </div>
+          <div class="form-group full">
+            <label>Email Address</label>
+            <input type="email" placeholder="ahmad@example.com" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">💳</div>
+          <h3>Payment Method</h3>
+        </div>
+        <div class="payment-methods">
+          <div class="pay-method active" onclick="selectPayment(this)">
+            <div class="icon">💳</div>
+            <div class="label">Credit Card</div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this)">
+            <div class="icon">🏦</div>
+            <div class="label">mada</div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this)">
+            <div class="icon">📱</div>
+            <div class="label">Apple Pay</div>
+          </div>
+          <div class="pay-method" onclick="selectPayment(this)">
+            <div class="icon">🔁</div>
+            <div class="label">STC Pay</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Card Number</label>
+            <input type="text" placeholder="•••• •••• •••• ••••" />
+          </div>
+          <div class="form-group">
+            <label>Expiry</label>
+            <input type="text" placeholder="MM / YY" />
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" placeholder="•••" />
+          </div>
+          <div class="form-group full">
+            <label>Cardholder Name</label>
+            <input type="text" placeholder="As printed on card" />
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.checkout-left -->
+
+    <!-- RIGHT: Order Summary -->
+    <div class="order-summary">
+      <div class="card">
+        <div class="summary-title">📋 Order Summary</div>
+        <div id="summary-lines">
+          <div class="summary-line">
+            <span>No plan selected</span>
+            <span>SAR 0</span>
+          </div>
+        </div>
+
+        <div class="promos" style="margin-top:16px">
+          <div class="promo-input">
+            <input type="text" placeholder="Promo / Referral code" id="promo-input" />
+            <button class="apply-btn" onclick="applyPromo()">Apply</button>
+          </div>
+        </div>
+
+        <div id="plan-highlights" class="plan-highlights" style="display:none">
+          <div class="highlight"><span class="dot">✓</span> Unlimited local calls</div>
+          <div class="highlight"><span class="dot">✓</span> 5G network access</div>
+          <div class="highlight"><span class="dot">✓</span> 24/7 support</div>
+          <div class="highlight"><span class="dot">✓</span> Cancel anytime</div>
+        </div>
+
+        <button class="checkout-btn" onclick="placeOrder()">
+          🔒 Confirm & Activate Plan
+        </button>
+        <div class="security-note">🔒 Secured by SSL · PCI-DSS compliant</div>
+      </div>
+    </div>
+
+  </div><!-- /.checkout-wrapper -->
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal">
+      <div class="modal-icon">🎉</div>
+      <h3>You're all set!</h3>
+      <p>Your stc postpaid plan has been activated. Check your email and SMS for confirmation details.</p>
+      <button class="modal-close" onclick="closeModal()">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       CI 360 CHECKOUT EVENTS & UPSELL LOGIC
+  ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    // ── 1. Load cart ──
+    const cart = JSON.parse(sessionStorage.getItem('stc_cart') || '[]');
+    let upsellAdded = false;
+
+    // ── 2. Render cart ──
+    function renderCart() {
+      const display = document.getElementById('cart-display');
+      const summaryLines = document.getElementById('summary-lines');
+      const highlights = document.getElementById('plan-highlights');
+
+      if (!cart.length) return;
+
+      highlights.style.display = 'block';
+      display.innerHTML = '';
+      let subtotal = 0;
+
+      cart.forEach(item => {
+        subtotal += item.price;
+        display.innerHTML += `
+          <div class="cart-item">
+            <div class="cart-item-left">
+              <div class="cart-item-icon">📶</div>
+              <div>
+                <div class="cart-item-name">stc ${item.name}</div>
+                <div class="cart-item-desc">${item.tier} Plan · Monthly postpaid</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="cart-item-price">SAR ${item.price} <span>/mo</span></div>
+            </div>
+          </div>`;
+      });
+
+      const vat = Math.round(subtotal * 0.15);
+      const total = subtotal + vat;
+
+      summaryLines.innerHTML = `
+        <div class="summary-line"><span>${cart[0].name}</span><span>SAR ${subtotal}</span></div>
+        <div class="summary-line"><span>VAT (15%)</span><span>SAR ${vat}</span></div>
+        <div class="summary-line total"><span>Total / Month</span><span>SAR ${total}</span></div>`;
+    }
+
+    renderCart();
+
+    // ── 3. CI 360: checkout page event ──
+    window.addEventListener('load', function () {
+      if (typeof ci360 === 'function') {
+        const cartPlans = cart.map(p => p.name).join(',');
+        const cartValue = cart.reduce((s, p) => s + p.price, 0);
+
+        ci360('send', 'page', {
+          pageType: 'checkout',
+          pageName: 'Checkout',
+          pageCategory: 'conversion',
+          cartValue: cartValue,
+          cartPlans: cartPlans
+        });
+
+        // ── CI 360: checkoutReached event → triggers upsell decision ──
+        if (cart.length > 0) {
+          ci360('send', 'event', {
+            eventType: 'checkoutReached',
+            cartValue: cartValue,
+            cartPlans: cartPlans,
+            planTier: cart[0]?.tier || '',
+            currency: 'SAR'
+          });
+          console.log('[CI360] checkoutReached event sent. Cart:', cartPlans, 'Value:', cartValue);
+
+          // ── Simulate CI 360 serving the upsell creative (in production,
+          //    CI 360 injects creative into #ci360-upsell-spot automatically) ──
+          setTimeout(showUpsell, 1200);
+        }
+      }
+    });
+
+    // Show upsell (simulates CI 360 creative injection)
+    function showUpsell() {
+      const placeholder = document.getElementById('upsell-placeholder');
+      const card = document.getElementById('demo-upsell-card');
+      if (placeholder) placeholder.style.display = 'none';
+      if (card) card.classList.add('visible');
+
+      // Track upsell impression in CI 360
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', {
+          eventType: 'upsellImpression',
+          offerType: 'device_bundle',
+          offerName: 'Samsung Galaxy S25',
+          zone: 'checkout_upsell'
+        });
+        console.log('[CI360] upsellImpression event sent');
+      }
+    }
+
+    function acceptUpsell() {
+      upsellAdded = true;
+      const card = document.getElementById('demo-upsell-card');
+      if (card) {
+        card.innerHTML = `<div class="upsell-icon">✅</div>
+          <div class="upsell-body">
+            <div class="upsell-tag">Added to Order</div>
+            <h4>Samsung Galaxy S25 — Added!</h4>
+            <p>Great choice! Your device will be delivered within 2-3 business days.</p>
+          </div>`;
+      }
+
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', {
+          eventType: 'upsellAccepted',
+          offerType: 'device_bundle',
+          offerName: 'Samsung Galaxy S25',
+          upsellValue: 149,
+          zone: 'checkout_upsell'
+        });
+        console.log('[CI360] upsellAccepted event sent');
+      }
+    }
+
+    function dismissUpsell() {
+      const card = document.getElementById('demo-upsell-card');
+      if (card) card.style.display = 'none';
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', { eventType: 'upsellDismissed', zone: 'checkout_upsell' });
+      }
+    }
+
+    // ── 4. Payment method toggle ──
+    function selectPayment(el) {
+      document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ── 5. Promo code ──
+    function applyPromo() {
+      const code = document.getElementById('promo-input').value.trim();
+      if (!code) return;
+      alert('Promo code "' + code + '" applied! (Demo)');
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', { eventType: 'promoApplied', promoCode: code });
+      }
+    }
+
+    // ── 6. Place order ──
+    function placeOrder() {
+      if (!cart.length) { alert('Please select a plan first.'); return; }
+
+      if (typeof ci360 === 'function') {
+        const totalValue = cart.reduce((s, p) => s + p.price, 0) + (upsellAdded ? 149 : 0);
+        ci360('send', 'event', {
+          eventType: 'purchase',
+          orderId: 'ORD-' + Date.now(),
+          totalValue: totalValue,
+          currency: 'SAR',
+          plans: cart.map(p => p.name).join(','),
+          upsellAccepted: upsellAdded
+        });
+        console.log('[CI360] purchase event sent. Total:', totalValue);
+      }
+
+      sessionStorage.removeItem('stc_cart');
+      document.getElementById('success-modal').classList.add('show');
+    }
+
+    function closeModal() {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

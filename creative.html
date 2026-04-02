@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  ══════════════════════════════════════════════════════════
+  SAS CI 360 — Creative Template: Hero Banner
+  Zone:         postpaid_hero_banner
+  Dimensions:   Full-width, ~120px min-height
+  Placement:    index.html → #ci360-hero-spot
+  Offer Type:   Promotional banner / targeted campaign
+  ══════════════════════════════════════════════════════════
+
+  HOW TO USE IN CI 360:
+  1. Go to: Activation → Digital → Spots
+  2. Create/edit the Spot "postpaid_hero_banner"
+  3. In Creative, paste the content between <body>…</body> below
+     (CI 360 injects the body content, not the full HTML doc)
+  4. Save & publish the task.
+  ══════════════════════════════════════════════════════════
+-->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CI 360 Creative Preview — Hero Banner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── Preview wrapper (remove when embedding in CI 360) ── */
+    body {
+      font-family: 'Sora', sans-serif;
+      margin: 0; padding: 24px;
+      background: #F7F5FF;
+    }
+    .preview-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #6B2FA0;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .preview-label::after { content: ''; flex:1; height:1px; background: #E8E2F5; }
+  </style>
+</head>
+<body>
+
+  <div class="preview-label">CI 360 Creative Preview — Hero Banner (postpaid_hero_banner) ▼</div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       START OF CI 360 CREATIVE CONTENT
+       Copy everything below into CI 360 Creative editor.
+  ══════════════════════════════════════════════════════════ -->
+
+  <style>
+    /* Scoped creative styles */
+    .ci-hero-banner * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
+    .ci-hero-banner {
+      background: linear-gradient(110deg, #491C76 0%, #6B2FA0 40%, #2E1050 100%);
+      border-radius: 18px;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+      position: relative;
+      min-height: 120px;
+    }
+    /* Decorative circles */
+    .ci-hero-banner::before {
+      content: '';
+      position: absolute; right: -60px; top: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .ci-hero-banner::after {
+      content: '';
+      position: absolute; right: 80px; bottom: -80px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: rgba(0,177,79,0.08);
+    }
+
+    /* Accent strip */
+    .ci-accent-strip {
+      width: 6px;
+      background: linear-gradient(180deg, #00B14F, #00D461);
+      flex-shrink: 0;
+    }
+
+    /* Content */
+    .ci-content {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px; flex: 1; gap: 20px; position: relative; z-index: 1;
+    }
+    .ci-left { display: flex; align-items: center; gap: 20px; }
+
+    /* Offer badge */
+    .ci-offer-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      text-align: center;
+      color: white;
+      flex-shrink: 0;
+    }
+    .ci-offer-badge .ci-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: #C8B4F5; display: block; margin-bottom: 4px;
+    }
+    .ci-offer-badge .ci-big { font-size: 28px; font-weight: 800; line-height: 1; color: #00D461; }
+    .ci-offer-badge .ci-unit { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
+
+    /* Text block */
+    .ci-text .ci-tag {
+      background: #F59E0B; color: #1A0A2E;
+      font-size: 10px; font-weight: 800; padding: 3px 10px;
+      border-radius: 20px; display: inline-block; margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .ci-text h2 {
+      font-size: 20px; font-weight: 800; color: white;
+      line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 4px;
+    }
+    .ci-text p { font-size: 13px; color: rgba(255,255,255,0.72); font-weight: 400; }
+
+    /* CTA button */
+    .ci-cta-wrap { flex-shrink: 0; display: flex; align-items: center; gap: 12px; }
+    .ci-countdown {
+      text-align: center; color: rgba(255,255,255,0.7); font-size: 11px;
+    }
+    .ci-countdown .ci-timer { font-size: 18px; font-weight: 800; color: #F59E0B; display: block; }
+    .ci-cta {
+      background: #00B14F;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ci-cta:hover {
+      background: #00D461;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,177,79,0.4);
+    }
+    .ci-cta .ci-arrow { font-size: 18px; transition: transform .2s; }
+    .ci-cta:hover .ci-arrow { transform: translateX(4px); }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .ci-countdown { display: none; }
+      .ci-offer-badge { display: none; }
+      .ci-text h2 { font-size: 16px; }
+    }
+  </style>
+
+  <div class="ci-hero-banner" id="ci-hero-banner">
+    <div class="ci-accent-strip"></div>
+    <div class="ci-content">
+      <div class="ci-left">
+        <!-- Offer numeric callout -->
+        <div class="ci-offer-badge">
+          <span class="ci-label">Exclusive</span>
+          <span class="ci-big">20%</span>
+          <span class="ci-unit">OFF</span>
+        </div>
+        <!-- Offer copy -->
+        <div class="ci-text">
+          <div class="ci-tag">⚡ Flash Offer — This Week Only</div>
+          <h2>Upgrade to Go 150 & Save SAR 480/year</h2>
+          <p>Switch to an annual plan today. Includes Shahid VIP, 5G Ultra Speed & GCC roaming.</p>
+        </div>
+      </div>
+      <!-- Right side: countdown + CTA -->
+      <div class="ci-cta-wrap">
+        <div class="ci-countdown">
+          <span class="ci-timer" id="ci-timer">23:47:12</span>
+          Offer ends in
+        </div>
+        <a class="ci-cta" href="#plans" onclick="ciCreativeClick()">
+          Claim Offer <span class="ci-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Countdown timer ──
+    (function() {
+      var end = new Date().getTime() + (23*3600 + 47*60 + 12) * 1000;
+      function tick() {
+        var diff = end - new Date().getTime();
+        if (diff < 0) { document.getElementById('ci-timer').textContent = 'Expired'; return; }
+        var h = Math.floor(diff/3600000);
+        var m = Math.floor((diff%3600000)/60000);
+        var s = Math.floor((diff%60000)/1000);
+        document.getElementById('ci-timer').textContent =
+          String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        setTimeout(tick, 1000);
+      }
+      tick();
+    })();
+
+    // ── CI 360 click tracking ──
+    function ciCreativeClick() {
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', {
+          eventType: 'creativeClick',
+          zone: 'postpaid_hero_banner',
+          offerType: 'annual_discount',
+          offerName: 'Go 150 Annual — 20% off',
+          creative: 'hero_flash_offer_v1'
+        });
+        console.log('[CI360] creativeClick sent from postpaid_hero_banner');
+      }
+    }
+  </script>
+
+  <!-- ══════════════════════════════════════════════════════════
+       END OF CI 360 CREATIVE CONTENT
+  ══════════════════════════════════════════════════════════ -->
+
+  <!-- ── 2nd creative variant: Checkout Upsell Banner ── -->
+  <br><br>
+  <div class="preview-label">CI 360 Creative Preview — Checkout Upsell (checkout_upsell) ▼</div>
+
+  <style>
+    .ci-upsell-banner * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
+    .ci-upsell-banner {
+      background: linear-gradient(110deg, #2E1050, #491C76);
+      border-radius: 18px; overflow: hidden; position: relative;
+    }
+    .ci-upsell-banner::before {
+      content: ''; position: absolute;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: rgba(0,177,79,0.06);
+      right: -100px; bottom: -100px;
+    }
+    .ci-upsell-inner {
+      display: flex; align-items: center; gap: 20px;
+      padding: 24px 28px; position: relative; z-index: 1;
+    }
+    .ci-device-img {
+      width: 72px; height: 72px; border-radius: 16px;
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; flex-shrink: 0;
+    }
+    .ci-upsell-copy { flex: 1; color: white; }
+    .ci-upsell-tag {
+      background: #F59E0B; color: #1A0A2E;
+      font-size: 10px; font-weight: 800; padding: 3px 10px;
+      border-radius: 20px; display: inline-block; margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .ci-upsell-copy h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .ci-upsell-copy p { font-size: 13px; color: rgba(255,255,255,0.75); }
+    .ci-upsell-action { flex-shrink: 0; text-align: right; }
+    .ci-upsell-price {
+      font-size: 22px; font-weight: 800; color: #00D461;
+      display: block; margin-bottom: 10px;
+    }
+    .ci-upsell-price small { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 400; }
+    .ci-upsell-btn {
+      background: #00B14F; color: white; border: none;
+      border-radius: 12px; padding: 12px 24px;
+      font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all .2s; display: block; white-space: nowrap;
+    }
+    .ci-upsell-btn:hover { background: #00D461; transform: translateY(-1px); }
+  </style>
+
+  <div class="ci-upsell-banner" id="ci-upsell-banner">
+    <div class="ci-upsell-inner">
+      <div class="ci-device-img">📱</div>
+      <div class="ci-upsell-copy">
+        <div class="ci-upsell-tag">🎁 Exclusive Bundle</div>
+        <h3>Add Samsung Galaxy S25 to Your Order</h3>
+        <p>Perfectly paired with your selected plan. Free delivery + 1-year warranty included.</p>
+      </div>
+      <div class="ci-upsell-action">
+        <span class="ci-upsell-price">SAR 149<small>/mo</small></span>
+        <button class="ci-upsell-btn" onclick="ciUpsellClick()">Add to Order →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function ciUpsellClick() {
+      if (typeof ci360 === 'function') {
+        ci360('send', 'event', {
+          eventType: 'upsellAccepted',
+          zone: 'checkout_upsell',
+          offerType: 'device_bundle',
+          offerName: 'Samsung Galaxy S25',
+          upsellValue: 149,
+          currency: 'SAR'
+        });
+        console.log('[CI360] upsellAccepted event from creative');
+      }
+    }
+  </script>
+
+</body>
+</html>
